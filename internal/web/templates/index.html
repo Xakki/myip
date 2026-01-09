@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MyIP</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      background: #f5f6f8;
+      color: #1b1b1f;
+    }
+    body {
+      margin: 0;
+      padding: 24px;
+    }
+    header {
+      max-width: 1100px;
+      margin: 0 auto 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0;
+      display: inline;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+    section {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    h2 {
+      font-size: 18px;
+      margin: 0 0 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 6px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+    th {
+      width: 240px;
+      color: #4b5563;
+      font-weight: 600;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eef2ff;
+      color: #3730a3;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    code {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        background: #0f1115;
+        color: #e5e7eb;
+      }
+      section {
+        background: #151922;
+        box-shadow: none;
+        border: 1px solid #1f2937;
+      }
+      th, td {
+        border-bottom: 1px solid #1f2937;
+      }
+      th {
+        color: #9ca3af;
+      }
+      .pill {
+        background: #1e1b4b;
+        color: #c7d2fe;
+      }
+      code {
+        background: #0b0f1a;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>MyIP</h1>
+      <span class="pill">Minimal &amp; Private</span>
+    </div>
+    <a href="https://github.com/Xakki" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+      <svg height="24" viewBox="0 0 16 16" width="24" style="fill: currentColor;">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+      </svg>
+      <span>GitHub</span>
+    </a>
+  </header>
+  <main>
+    <section>
+      <h2>IP Information</h2>
+      <table>
+        <tr><th>IP</th><td>{{.IP}}</td></tr>
+        <tr><th>Count call</th><td>{{.CountCall}}</td></tr>
+        <tr><th>Country</th><td>{{if .HasRDAP}}{{.RDAP.Country}}{{else}}-{{end}}</td></tr>
+        <tr><th>Handle</th><td>{{if .HasRDAP}}{{.RDAP.Handle}}{{else}}-{{end}}</td></tr>
+        <tr><th>IP Version</th><td>{{if .HasRDAP}}{{.RDAP.IPVersion}}{{else}}-{{end}}</td></tr>
+        <tr><th>Name</th><td>{{if .HasRDAP}}{{.RDAP.Name}}{{else}}-{{end}}</td></tr>
+        <tr><th>Type</th><td>{{if .HasRDAP}}{{.RDAP.Type}}{{else}}-{{end}}</td></tr>
+        <tr>
+          <th>Events</th>
+          <td>
+            {{if .HasRDAP}}
+              {{if .RDAP.Events}}
+                <ul>
+                  {{range .RDAP.Events}}
+                    <li>{{.Action}} — {{.Date}}</li>
+                  {{end}}
+                </ul>
+              {{else}}
+                -
+              {{end}}
+            {{else}}-
+            {{end}}
+          </td>
+        </tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>Browser Overview</h2>
+      <div class="grid-2">
+        <div>
+          <table id="browser-info"></table>
+        </div>
+        <div>
+          <table id="screen-info"></table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Proxy Detection Signals</h2>
+      <table id="proxy-info"></table>
+    </section>
+
+    <section>
+      <h2>Canvas Fingerprint</h2>
+      <table id="canvas-info"></table>
+    </section>
+
+    <section>
+      <h2>WebRTC</h2>
+      <table id="webrtc-info"></table>
+    </section>
+
+    <section>
+      <h2>JavaScript Capabilities</h2>
+      <table id="js-info"></table>
+    </section>
+
+    <section>
+      <h2>Fonts</h2>
+      <table id="fonts-info"></table>
+    </section>
+  </main>
+
+  <script>
+    const addRow = (tableId, label, value) => {
+      const table = document.getElementById(tableId);
+      const row = document.createElement('tr');
+      const th = document.createElement('th');
+      const td = document.createElement('td');
+      th.textContent = label;
+      td.textContent = value;
+      row.appendChild(th);
+      row.appendChild(td);
+      table.appendChild(row);
+    };
+
+    const browserInfo = () => {
+      addRow('browser-info', 'User agent', navigator.userAgent);
+      addRow('browser-info', 'Platform', navigator.platform || 'n/a');
+      addRow('browser-info', 'Language', navigator.language || 'n/a');
+      addRow('browser-info', 'Languages', (navigator.languages || []).join(', ') || 'n/a');
+      addRow('browser-info', 'Cookies enabled', String(navigator.cookieEnabled));
+      addRow('browser-info', 'Do Not Track', navigator.doNotTrack || 'n/a');
+      addRow('browser-info', 'Hardware concurrency', navigator.hardwareConcurrency || 'n/a');
+      addRow('browser-info', 'Device memory', navigator.deviceMemory || 'n/a');
+      addRow('browser-info', 'Touch points', navigator.maxTouchPoints || 0);
+      addRow('browser-info', 'Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone || 'n/a');
+    };
+
+    const screenInfo = () => {
+      addRow('screen-info', 'Screen size', `${screen.width}x${screen.height}`);
+      addRow('screen-info', 'Available size', `${screen.availWidth}x${screen.availHeight}`);
+      addRow('screen-info', 'Color depth', String(screen.colorDepth));
+      addRow('screen-info', 'Pixel ratio', String(window.devicePixelRatio || 1));
+      addRow('screen-info', 'Timezone offset (min)', String(new Date().getTimezoneOffset()));
+    };
+
+    const proxyInfo = () => {
+      addRow('proxy-info', 'WebDriver', String(navigator.webdriver));
+      addRow('proxy-info', 'VPN/Proxy hint', navigator.connection ? `${navigator.connection.effectiveType || 'n/a'} / ${navigator.connection.downlink || 'n/a'} Mbps` : 'n/a');
+      addRow('proxy-info', 'RTT', navigator.connection && navigator.connection.rtt ? `${navigator.connection.rtt} ms` : 'n/a');
+      addRow('proxy-info', 'Plugins count', String(navigator.plugins ? navigator.plugins.length : 0));
+      addRow('proxy-info', 'MIME types', String(navigator.mimeTypes ? navigator.mimeTypes.length : 0));
+    };
+
+    const hashData = async data => {
+      if (window.crypto && window.crypto.subtle) {
+        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+        return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+      let hash = 0;
+      for (let i = 0; i < data.length; i += 1) {
+        hash = ((hash << 5) - hash) + data.charCodeAt(i);
+        hash |= 0;
+      }
+      return `legacy-${Math.abs(hash)}`;
+    };
+
+    const canvasFingerprint = async () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 400;
+      canvas.height = 120;
+      ctx.textBaseline = 'top';
+      ctx.font = '16px Arial';
+      ctx.fillStyle = '#f60';
+      ctx.fillRect(0, 0, 200, 40);
+      ctx.fillStyle = '#069';
+      ctx.fillText('MyIP canvas fingerprint', 10, 10);
+      ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
+      ctx.fillText('😀🚀', 220, 20);
+      const dataURL = canvas.toDataURL();
+      const hash = await hashData(dataURL);
+      addRow('canvas-info', 'Canvas data hash', hash);
+      addRow('canvas-info', 'Data length', String(dataURL.length));
+    };
+
+    const webrtcInfo = async () => {
+      const ips = new Set();
+      if (!window.RTCPeerConnection) {
+        addRow('webrtc-info', 'WebRTC supported', 'false');
+        return;
+      }
+      addRow('webrtc-info', 'WebRTC supported', 'true');
+      const pc = new RTCPeerConnection({ iceServers: [] });
+      pc.createDataChannel('');
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      pc.onicecandidate = event => {
+        if (!event || !event.candidate) {
+          addRow('webrtc-info', 'ICE candidates', Array.from(ips).join(', ') || 'n/a');
+          pc.close();
+          return;
+        }
+        const parts = event.candidate.candidate.split(' ');
+        const candidateIP = parts[4];
+        if (candidateIP) {
+          ips.add(candidateIP);
+        }
+      };
+    };
+
+    const jsCapabilities = () => {
+      addRow('js-info', 'Local storage', (() => { try { return String(!!window.localStorage); } catch { return 'blocked'; } })());
+      addRow('js-info', 'Session storage', (() => { try { return String(!!window.sessionStorage); } catch { return 'blocked'; } })());
+      addRow('js-info', 'IndexedDB', String(!!window.indexedDB));
+      addRow('js-info', 'WebGL', (() => {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        return gl ? 'supported' : 'not supported';
+      })());
+      addRow('js-info', 'Java enabled', navigator.javaEnabled ? String(navigator.javaEnabled()) : 'n/a');
+    };
+
+    const fontsInfo = () => {
+      const baseFonts = ['monospace', 'sans-serif', 'serif'];
+      const testFonts = ['Arial', 'Verdana', 'Times New Roman', 'Courier New', 'Georgia', 'Comic Sans MS', 'Trebuchet MS'];
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const testString = 'mmmmmmmmmlli';
+      const size = '72px';
+
+      const defaultWidth = {};
+      baseFonts.forEach(base => {
+        ctx.font = `${size} ${base}`;
+        defaultWidth[base] = ctx.measureText(testString).width;
+      });
+
+      const available = [];
+      testFonts.forEach(font => {
+        const detected = baseFonts.some(base => {
+          ctx.font = `${size} '${font}',${base}`;
+          return ctx.measureText(testString).width !== defaultWidth[base];
+        });
+        if (detected) {
+          available.push(font);
+        }
+      });
+
+      addRow('fonts-info', 'Detected fonts', available.join(', ') || 'n/a');
+    };
+
+    const run = async () => {
+      browserInfo();
+      screenInfo();
+      proxyInfo();
+      await canvasFingerprint();
+      await webrtcInfo();
+      jsCapabilities();
+      fontsInfo();
+    };
+
+    run();
+  </script>
+</body>
+</html>
