@@ -1,13 +1,12 @@
-Описание проекта и функционал:
+# Описание проекта и функционал:
+
 - При запуске используется фаил .env в котором указывается: 
     - WEB=host:port (обязятелен)
     - REDIS=host:port (обязателен)
     - REDIS_USER и REDIS_PASS (не обязательны)
     - RDAP_API=https://rdap.db.ripe.net/ip/{REMOTE_IP} (не обязателен)
-- Сервис на подобие https://www.myip.com/ но без статистики/карты, только информация полученная из браузера и IP. Дизайн минималистичный но аккуратный.
-- Ошибки логируем в системный журнал.
-- Статистику и логи не собирает.
-- код должен быть хорошо читаем, соответствовать принципам SOLID, DRY, KISS. 
+    - LOG_TYPE=console/syslog/gelf/system
+    - LOG_ADDR=
 - Используем простую архитектуру с применением шаблонов для html. При компиляции все фаилы сохраняеются в бинарник, кроме .env
 - Endpoint  только корневой /
 - Получаем информацию об IP по запросу из RDAP_API и кешируем его в редис (храним неделю, но обновляем через сутки). Если ошибка в запросе то не падаем и в ответе просто будет пустой результат.
@@ -30,3 +29,49 @@
     - https://browserleaks.com/javascript
     - https://browserleaks.com/fonts
     - https://browserleaks.com/canvas
+ 
+# Примеры
+
+- https://xakki.pro/
+- https://xakki.pro/api
+- https://api.xakki.pro/
+- https://xakki.pro/?ip=127.0.0.1
+- https://xakki.pro/api?ip=127.0.0.1
+
+
+# Запуск проекта как сервис
+
+1. Скачать релизный бинарник и распаковать (например в /var/www/myip)
+
+3. `cp .env_dist .env` и отредактировать под свои нужды
+
+4. Используем свой редис или запускаем `docker run -d --name keydb -p 6378:6379 -v myip-keydb:/data eqalpha/keydb`
+
+5. создать фаил `nano /etc/systemd/system/myip.service`
+```
+[Unit]
+Description=MyIp simple service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/myip
+ExecStart=/var/www/myip/myip
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+6. Выполнить
+```
+systemctl daemon-reload
+systemctl enable myip
+systemctl start myip
+systemctl status myip
+```
+
+Если статус красный, то смотрим логи `journalctl -u myip -f`
+
