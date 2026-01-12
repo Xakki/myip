@@ -4,7 +4,6 @@ import (
 	"context"
 	"io"
 	"log"
-	"log/syslog"
 	"net/http"
 	"os"
 	"time"
@@ -72,7 +71,7 @@ func initLogger(cfg config.Config) *log.Logger {
 
 	switch cfg.LogType {
 	case "syslog":
-		writer, err = syslog.New(syslog.LOG_INFO|syslog.LOG_USER, "myip")
+		writer, err = getSyslogWriter()
 		if err != nil {
 			log.Printf("failed to initialize syslog: %v, falling back to stderr", err)
 			writer = os.Stderr
@@ -91,7 +90,7 @@ func initLogger(cfg config.Config) *log.Logger {
 	case "system":
 		// On Linux, this might be journald, but through syslog or stderr.
 		// Here we'll treat "system" as syslog with fallback to stderr.
-		writer, err = syslog.New(syslog.LOG_INFO|syslog.LOG_USER, "myip")
+		writer, err = getSystemWriter()
 		if err != nil {
 			writer = os.Stderr
 		}
