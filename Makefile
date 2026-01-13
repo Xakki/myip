@@ -31,7 +31,11 @@ test-coverage: ## Run tests with coverage
 	go test -v -coverprofile=coverage.out ./...
 	go tool cover -func=coverage.out
 
-##@ Lint
+goreleaser: ## Install goreleaser
+	go install github.com/goreleaser/goreleaser/v2@latest
+
+test-release: ## Test releaser
+	goreleaser release --snapshot --clean --skip=publish
 
 lint: ## Run linter
 	go vet ./...

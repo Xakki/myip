@@ -32,22 +32,29 @@
  
 # Примеры
 
-- https://xakki.pro/
-- https://xakki.pro/api
-- https://api.xakki.pro/
-- https://xakki.pro/?ip=127.0.0.1
-- https://xakki.pro/api?ip=127.0.0.1
+- https://myip.xakki.pro/
+- https://myip.xakki.pro/api
+- https://api.myip.xakki.pro/
+- https://myip.xakki.pro/?ip=127.0.0.1
+- https://myip.xakki.pro/api?ip=127.0.0.1
 
 
 # Запуск проекта как сервис
 
 1. Скачать релизный бинарник и распаковать (например в /var/www/myip)
+```
+wget -O myip.tar.gz https://github.com/Xakki/myip/releases/download/v0.1/myip_0.1_linux_amd64.tar.gz
+mkdir myip
+tar -xvzf myip.tar.gz -C ./myip
+cd myip
+```
 
-3. `cp .env_dist .env` и отредактировать под свои нужды
+3. `nano .env` и отредактировать под свои нужды
 
 4. Используем свой редис или запускаем `docker run -d --name keydb -p 6378:6379 -v myip-keydb:/data eqalpha/keydb`
 
-5. создать фаил `nano /etc/systemd/system/myip.service`
+5. Делаем автозапуск.
+   создать фаил `nano /etc/systemd/system/myip.service`
 ```
 [Unit]
 Description=MyIp simple service
